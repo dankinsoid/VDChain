@@ -1,12 +1,8 @@
-//
-// Created by Данил Войдилов on 20.05.2022.
-// Copyright (c) 2022 tabby.ai. All rights reserved.
-//
-
 import Foundation
 
 /// A type that provides chaining syntax for values.
 public protocol ValueChaining: Chaining {
+    
     var value: Value { get }
 }
 
@@ -23,4 +19,9 @@ extension ValueChaining {
     public func modifier(_ chain: TypeChain<Value>) -> Self {
         self.do(chain.applier)
     }
+}
+
+///Creates a `Chain` instance
+public postfix func ~<C: ValueChaining>(_ lhs: C) -> C.Value {
+    lhs.apply()
 }

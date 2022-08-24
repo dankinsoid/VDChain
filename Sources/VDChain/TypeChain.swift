@@ -1,8 +1,3 @@
-//
-// Created by Данил Войдилов on 20.05.2022.
-// Copyright (c) 2022 tabby.ai. All rights reserved.
-//
-
 import Foundation
 
 /**
@@ -17,6 +12,7 @@ modifier.apply(
  */
 @dynamicMemberLookup
 public struct TypeChain<Value>: Chaining {
+    
     public var applier: (inout Value) -> Void = { _ in }
 
     public init() {}
@@ -24,4 +20,11 @@ public struct TypeChain<Value>: Chaining {
 
 public postfix func ~<T>(_ lhs: T.Type) -> TypeChain<T> {
     TypeChain()
+}
+
+extension NSObjectProtocol {
+    
+    public static var chain: TypeChain<Self> {
+        TypeChain()
+    }
 }

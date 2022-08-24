@@ -1,13 +1,9 @@
-//
-// Created by Данил Войдилов on 20.05.2022.
-// Copyright (c) 2022 tabby.ai. All rights reserved.
-//
-
 import Foundation
 
 /// Helper type for chaining
 @dynamicMemberLookup
 public struct PropertyChain<Base: Chaining, Value> {
+    
     public let chaining: Base
     public let getter: KeyPath<Base.Value, Value>
 
@@ -23,7 +19,7 @@ public struct PropertyChain<Base: Chaining, Value> {
     public func callAsFunction(_ value: Value) -> Base {
         guard let kp = getter as? WritableKeyPath<Base.Value, Value> else { return chaining }
         var result = chaining
-        result.applier = {[chaining] result in
+        result.applier = { [chaining] result in
             chaining.applier(&result)
             result[keyPath: kp] = value
         }

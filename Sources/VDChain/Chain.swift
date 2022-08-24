@@ -1,8 +1,3 @@
-//
-// Created by Данил Войдилов on 20.05.2022.
-// Copyright (c) 2022 tabby.ai. All rights reserved.
-//
-
 import Foundation
 
 /**
@@ -18,6 +13,7 @@ let label = UILabel()~
  */
 @dynamicMemberLookup
 public struct Chain<Value>: ValueChaining {
+    
     /// value to modify
     public var value: Value
     public var applier: (inout Value) -> Void = { _ in }
@@ -35,4 +31,11 @@ postfix operator ~
 ///Creates a `Chain` instance
 public postfix func ~<Value>(_ lhs: Value) -> Chain<Value> {
     Chain(lhs)
+}
+
+extension NSObjectProtocol {
+    
+    public var chain: Chain<Self> {
+        Chain(self)
+    }
 }

@@ -1,12 +1,8 @@
-//
-// Created by Данил Войдилов on 20.05.2022.
-// Copyright (c) 2022 tabby.ai. All rights reserved.
-//
-
 import Foundation
 
 /// A type that provides [method chaining](https://en.wikipedia.org/wiki/Method_chaining) syntax and stores all the modifiers collected in the chain.
 public protocol Chaining {
+    
     associatedtype Value
     var applier: (inout Value) -> Void { get set }
 }
@@ -19,7 +15,7 @@ extension Chaining {
     /// - Returns: `Self`
     public func `do`(_ action: @escaping (inout Value) -> Void) -> Self {
         var result = self
-        result.applier = {[applier] result in
+        result.applier = { [applier] result in
             applier(&result)
             action(&result)
         }
