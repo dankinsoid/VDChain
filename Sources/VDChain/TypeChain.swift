@@ -11,11 +11,19 @@ modifier.apply(
 ```
  */
 @dynamicMemberLookup
-public struct TypeChain<Value>: Chaining {
+public struct TypeChain<Root>: ConsistentChaining {
     
-    public var applier: (inout Value) -> Void = { _ in }
-
     public init() {}
+    
+    public func apply(on root: inout Root) {
+    }
+    
+    public func getAllValues(for root: Root) -> Void {
+        ()
+    }
+    
+    public func applyAllValues(_ values: Void, for root: inout Root) {
+    }
 }
 
 public postfix func ~<T>(_ lhs: T.Type) -> TypeChain<T> {

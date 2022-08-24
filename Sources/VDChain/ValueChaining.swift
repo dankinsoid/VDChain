@@ -3,25 +3,44 @@ import Foundation
 /// A type that provides chaining syntax for values.
 public protocol ValueChaining: Chaining {
     
-    var value: Value { get }
+    var root: Root { get }
 }
 
 extension ValueChaining {
 
     ///Apply the chaining
     @discardableResult
-    public func apply() -> Value {
-        var result = value
-        applier(&result)
+    public func apply() -> Root {
+        var result = root
+        apply(on: &result)
         return result
-    }
-
-    public func modifier(_ chain: TypeChain<Value>) -> Self {
-        self.do(chain.applier)
     }
 }
 
+#if swift(>=5.7)
+#else
+@dynamicMemberLookup
+public struct AnyValueChaining<Root>: ValueChaining {
+    
+    public var root: Root
+    var applier: (inout Root) -> Void
+    
+    public init<C: ValueChaining>(_ chaining: C) where C.Root == Root {
+        self.init(chaining.root, applier: chaining.apply)
+    }
+    
+    public init(_ root: Root, applier: @escaping (inout Root) -> Void) {
+        self.root = root
+        self.applier = applier
+    }
+    
+    public func apply(on root: inout Root) {
+        applier(&root)
+    }
+}
+#endif
+
 ///Creates a `Chain` instance
-public postfix func ~<C: ValueChaining>(_ lhs: C) -> C.Value {
+public postfix func ~<C: ValueChaining>(_ lhs: C) -> C.Root {
     lhs.apply()
 }

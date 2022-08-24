@@ -5,9 +5,9 @@ import Foundation
 public struct PropertyChain<Base: Chaining, Value> {
     
     public let chaining: Base
-    public let getter: KeyPath<Base.Value, Value>
+    public let getter: KeyPath<Base.Root, Value>
 
-    public init(_ value: Base, getter: KeyPath<Base.Value, Value>) {
+    public init(_ value: Base, getter: KeyPath<Base.Root, Value>) {
         chaining = value
         self.getter = getter
     }
@@ -16,14 +16,13 @@ public struct PropertyChain<Base: Chaining, Value> {
         PropertyChain<Base, A>(chaining, getter: getter.appending(path: keyPath))
     }
 
-    public func callAsFunction(_ value: Value) -> Base {
-        guard let kp = getter as? WritableKeyPath<Base.Value, Value> else { return chaining }
-        var result = chaining
-        result.applier = { [chaining] result in
-            chaining.applier(&result)
-            result[keyPath: kp] = value
+    public func callAsFunction(_ value: Value) -> ChainedChain<Base, Value> {
+        ChainedChain(base: chaining, value: value) { [getter] base in
+            base[keyPath: getter]
+        } set: { [getter] value, base in
+            guard let keyPath = getter as? WritableKeyPath<Base.Root, Value> else { return }
+            base[keyPath: keyPath] = value
         }
-        return result
     }
 }
 

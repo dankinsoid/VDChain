@@ -12,24 +12,33 @@ let label = UILabel()~
 ```
  */
 @dynamicMemberLookup
-public struct Chain<Value>: ValueChaining {
+public struct Chain<Root>: ValueChaining, ConsistentChaining {
     
     /// value to modify
-    public var value: Value
-    public var applier: (inout Value) -> Void = { _ in }
+    public var root: Root
 
     /// Initialization
     ///
     /// - Parameter value: the value to modify
-    public init(_ value: Value) {
-        self.value = value
+    public init(_ root: Root) {
+        self.root = root
+    }
+    
+    public func apply(on root: inout Root) {
+    }
+    
+    public func getAllValues(for root: Root) -> Void {
+        ()
+    }
+    
+    public func applyAllValues(_ values: Void, for root: inout Root) {
     }
 }
 
 postfix operator ~
 
 ///Creates a `Chain` instance
-public postfix func ~<Value>(_ lhs: Value) -> Chain<Value> {
+public postfix func ~<Root>(_ lhs: Root) -> Chain<Root> {
     Chain(lhs)
 }
 
