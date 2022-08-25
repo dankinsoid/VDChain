@@ -1,6 +1,5 @@
 import Foundation
 
-@dynamicMemberLookup
 public struct DoChain<Base: Chaining>: Chaining {
     
     public var action: (inout Base.Root) -> Void

@@ -6,20 +6,8 @@ public protocol ValueChaining: Chaining {
     var root: Root { get }
 }
 
-extension ValueChaining {
-
-    ///Apply the chaining
-    @discardableResult
-    public func apply() -> Root {
-        var result = root
-        apply(on: &result)
-        return result
-    }
-}
-
 #if swift(>=5.7)
 #else
-@dynamicMemberLookup
 public struct AnyValueChaining<Root>: ValueChaining {
     
     public var root: Root
@@ -38,9 +26,16 @@ public struct AnyValueChaining<Root>: ValueChaining {
         applier(&root)
     }
 }
+
+extension ValueChaining {
+    
+    public func any() -> AnyValueChaining<Root> {
+        AnyValueChaining(self)
+    }
+}
 #endif
 
 ///Creates a `Chain` instance
-public postfix func ~<C: ValueChaining>(_ lhs: C) -> C.Root {
+public postfix func ~<C: ValueChaining>(_ lhs: Chain<C>) -> C.Root {
     lhs.apply()
 }

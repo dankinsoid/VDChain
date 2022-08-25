@@ -1,6 +1,5 @@
 import Foundation
 
-@dynamicMemberLookup
 public struct ChainedChain<Base: Chaining, Value>: Chaining {
     
     public var base: Base

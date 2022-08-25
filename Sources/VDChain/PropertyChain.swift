@@ -16,13 +16,14 @@ public struct PropertyChain<Base: Chaining, Value> {
         PropertyChain<Base, A>(chaining, getter: getter.appending(path: keyPath))
     }
 
-    public func callAsFunction(_ value: Value) -> ChainedChain<Base, Value> {
+    public func callAsFunction(_ value: Value) -> Chain<ChainedChain<Base, Value>> {
         ChainedChain(base: chaining, value: value) { [getter] base in
             base[keyPath: getter]
         } set: { [getter] value, base in
             guard let keyPath = getter as? WritableKeyPath<Base.Root, Value> else { return }
             base[keyPath: keyPath] = value
         }
+        .wrap()
     }
 }
 

@@ -5,12 +5,11 @@ Wrapper that provides `method chaining` syntax for any type.
 
  Usage example:
 ```
-let modifier = UILabel.self~.text("Some Text").textColor(.blue)
+let modifier = UILabel.chain.text("Some Text").textColor(.blue).any()
 
 modifier.apply(
 ```
  */
-@dynamicMemberLookup
 public struct TypeChain<Root>: ConsistentChaining {
     
     public init() {}
@@ -26,13 +25,13 @@ public struct TypeChain<Root>: ConsistentChaining {
     }
 }
 
-public postfix func ~<T>(_ lhs: T.Type) -> TypeChain<T> {
-    TypeChain()
+public postfix func ~<T>(_ lhs: T.Type) -> Chain<TypeChain<T>> {
+    TypeChain().wrap()
 }
 
 extension NSObjectProtocol {
     
-    public static var chain: TypeChain<Self> {
-        TypeChain()
+    public static var chain: Chain<TypeChain<Self>> {
+        TypeChain().wrap()
     }
 }

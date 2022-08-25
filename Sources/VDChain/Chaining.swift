@@ -7,16 +7,8 @@ public protocol Chaining {
     func apply(on root: inout Root) -> Void
 }
 
-extension Chaining {
-    
-    public subscript<A>(dynamicMember keyPath: KeyPath<Root, A>) -> PropertyChain<Self, A> {
-        PropertyChain(self, getter: keyPath)
-    }
-}
-
 #if swift(>=5.7)
 #else
-@dynamicMemberLookup
 public struct AnyChaining<Root>: Chaining {
     
     var applier: (inout Root) -> Void
@@ -31,6 +23,13 @@ public struct AnyChaining<Root>: Chaining {
     
     public func apply(on root: inout Root) {
         applier(&root)
+    }
+}
+
+extension Chaining {
+    
+    public func any() -> AnyChaining<Root> {
+        AnyChaining(self)
     }
 }
 #endif

@@ -1,6 +1,5 @@
 import Foundation
 
-@dynamicMemberLookup
 public struct ModifierChain<Base: Chaining, Modifier: Chaining>: Chaining where Modifier.Root == Base.Root {
     
     public var base: Base
@@ -35,13 +34,5 @@ extension ModifierChain: ConsistentChaining where Base: ConsistentChaining, Modi
     
     public func getAllValues(for root: Base.Root) -> AllValues {
         (base.getAllValues(for: root), modifier.getAllValues(for: root))
-    }
-}
-
-extension Chaining {
-    
-    
-    public func modifier<C: Chaining>(_ chain: C) -> ModifierChain<Self, C> {
-        ModifierChain(base: self, modifier: chain)
     }
 }

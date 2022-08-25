@@ -1,50 +1,41 @@
 import Foundation
 
-/**
- Wrapper that provides `method chaining` syntax for any value.
-
- Usage example:
-```
-let label = UILabel()~
-                .text("Some Text")
-                .textColor(.blue)
-                .apply()
-```
- */
 @dynamicMemberLookup
-public struct Chain<Root>: ValueChaining, ConsistentChaining {
+public struct Chain<Base: Chaining> {
     
-    /// value to modify
-    public var root: Root
+    public var base: Base
 
-    /// Initialization
-    ///
-    /// - Parameter value: the value to modify
-    public init(_ root: Root) {
-        self.root = root
+    public init(_ base: Base) {
+        self.base = base
     }
     
-    public func apply(on root: inout Root) {
+    public subscript<A>(dynamicMember keyPath: KeyPath<Base.Root, A>) -> PropertyChain<Base, A> {
+        PropertyChain(base, getter: keyPath)
     }
     
-    public func getAllValues(for root: Root) -> Void {
-        ()
+    public func modifier<C: Chaining>(_ modifier: C) -> Chain<ModifierChain<Base, C>> {
+        ModifierChain(base: base, modifier: modifier).wrap()
     }
     
-    public func applyAllValues(_ values: Void, for root: inout Root) {
+    public func any() -> AnyChaining<Base.Root> {
+        base.any()
     }
 }
 
-postfix operator ~
-
-///Creates a `Chain` instance
-public postfix func ~<Root>(_ lhs: Root) -> Chain<Root> {
-    Chain(lhs)
-}
-
-extension NSObjectProtocol {
+extension Chaining {
     
-    public var chain: Chain<Self> {
+    public func wrap() -> Chain<Self> {
         Chain(self)
+    }
+}
+
+extension Chain where Base: ValueChaining {
+    
+    ///Apply the chaining
+    @discardableResult
+    public func apply() -> Base.Root {
+        var result = base.root
+        base.apply(on: &result)
+        return result
     }
 }

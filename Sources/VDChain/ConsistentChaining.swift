@@ -9,7 +9,6 @@ public protocol ConsistentChaining: Chaining {
 
 #if swift(>=5.7)
 #else
-@dynamicMemberLookup
 public struct AnyConsistentChaining<Root, AllValues>: ConsistentChaining {
     
     var applier: (inout Root) -> Void
@@ -40,6 +39,13 @@ public struct AnyConsistentChaining<Root, AllValues>: ConsistentChaining {
     
     public func applyAllValues(_ values: AllValues, for root: inout Root) {
         setter(values, &root)
+    }
+}
+
+extension ConsistentChaining {
+    
+    public func any() -> AnyConsistentChaining<Root, AllValues> {
+        AnyConsistentChaining(self)
     }
 }
 #endif
