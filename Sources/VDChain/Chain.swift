@@ -22,6 +22,17 @@ public struct Chain<Base: Chaining> {
     }
 }
 
+extension Chain {
+    
+    /// Add a closure modifier to the chaining.
+    ///
+    /// - Parameter action: the modifier closure.
+    /// - Returns: `Self`
+    public func `do`(_ action: @escaping (inout Base.Root) -> Void) -> Chain<DoChain<Base>> {
+        DoChain(base: base, action: action).wrap()
+    }
+}
+
 extension Chaining {
     
     public func wrap() -> Chain<Self> {

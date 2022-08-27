@@ -22,14 +22,3 @@ extension DoChain: ValueChaining where Base: ValueChaining {
         base.root
     }
 }
-
-extension Chaining {
-    
-    /// Add a closure modifier to the chaining.
-    ///
-    /// - Parameter action: the modifier closure.
-    /// - Returns: `Self`
-    public func `do`(_ action: @escaping (inout Root) -> Void) -> DoChain<Self> {
-        DoChain(base: self, action: action)
-    }
-}
