@@ -11,10 +11,11 @@ let label = UILabel()~
                 .apply()
 ```
  */
-public struct EmptyChaining<Root>: ValueChaining, ConsistentChaining {
+public struct EmptyChaining<Root>: ValueChaining, ConsistentChaining, KeyPathChaining {
     
     /// value to modify
     public var root: Root
+    public let values: [PartialKeyPath<Root>: Any] = [:]
 
     /// Initialization
     ///

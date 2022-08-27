@@ -10,7 +10,9 @@ let modifier = UILabel.chain.text("Some Text").textColor(.blue).any()
 modifier.apply(
 ```
  */
-public struct TypeChain<Root>: ConsistentChaining {
+public struct TypeChain<Root>: ConsistentChaining, KeyPathChaining {
+    
+    public let values: [PartialKeyPath<Root>: Any] = [:]
     
     public init() {}
     
