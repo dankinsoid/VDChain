@@ -17,9 +17,12 @@ public struct Chain<Base: Chaining> {
         ModifierChain(base: base, modifier: modifier).wrap()
     }
     
+#if swift(>=5.7)
+#else
     public func any() -> AnyChaining<Base.Root> {
         base.any()
     }
+#endif
 }
 
 extension Chain {
