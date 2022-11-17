@@ -1,7 +1,7 @@
 import Foundation
 
 /// A type that provides [method chaining](https://en.wikipedia.org/wiki/Method_chaining) syntax and stores all the modifiers collected in the chain.
-public protocol Chaining {
+public protocol Chaining<Root> {
     
     associatedtype Root
     func apply(on root: inout Root) -> Void
