@@ -1,7 +1,7 @@
 import Foundation
 
 /// A type that provides chaining syntax for values.
-public protocol ValueChaining: Chaining {
+public protocol ValueChaining<Root>: Chaining {
     
     var root: Root { get }
 }

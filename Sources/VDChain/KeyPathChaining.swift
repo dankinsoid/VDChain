@@ -1,6 +1,6 @@
 import Foundation
 
-public protocol KeyPathChaining: ConsistentChaining {
+public protocol KeyPathChaining<Root>: ConsistentChaining {
     
     var values: [PartialKeyPath<Root>: Any] { get }
 }

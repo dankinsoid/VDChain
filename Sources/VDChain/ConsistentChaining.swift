@@ -1,6 +1,6 @@
 import Foundation
 
-public protocol ConsistentChaining: Chaining {
+public protocol ConsistentChaining<Root>: Chaining {
     
     associatedtype AllValues
     func getAllValues(for root: Root) -> AllValues
