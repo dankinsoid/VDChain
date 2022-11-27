@@ -34,6 +34,14 @@ extension Chain {
     public func `do`(_ action: @escaping (inout Base.Root) -> Void) -> Chain<DoChain<Base>> {
         DoChain(base: base, action: action).wrap()
     }
+    
+    /// Set value with keypath
+    ///
+    /// - Parameter action: the modifier closure.
+    /// - Returns: `Self`
+    public func set<T>(_ keyPath: WritableKeyPath<Base.Root, T>, _ value: T) -> Chain<KeyPathChain<Base, T>> {
+        KeyPathChain(base, keyPath: keyPath, value: value).wrap()
+    }
 }
 
 extension Chaining {
