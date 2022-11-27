@@ -36,3 +36,12 @@ extension ModifierChain: ConsistentChaining where Base: ConsistentChaining, Modi
         (base.getAllValues(for: root), modifier.getAllValues(for: root))
     }
 }
+
+extension ModifierChain: KeyPathChaining where Base: KeyPathChaining, Modifier: KeyPathChaining {
+    
+    public var values: [PartialKeyPath<Base.Root>: Any] {
+        base.values.merging(modifier.values) { _, new in
+            new
+        }
+    }
+}

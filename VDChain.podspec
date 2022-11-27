@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'VDChain'
-  s.version          = '2.5.2'
+  s.version          = '2.6.0'
   s.summary          = 'Combination of @dynamicMemberLookup with KeyPathes and callAsFunction'
   s.description      = <<-DESC
 TODO: Add long description of the pod here.
