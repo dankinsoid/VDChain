@@ -4,7 +4,7 @@ public protocol Chainable {
 
 	associatedtype Chain: Chaining = EmptyChaining<Self>
 	associatedtype TypeChain: Chaining = VDChain.TypeChain<Self>
-	static var chain: Chain<TypeChain> { get }
+	static var chain: VDChain.Chain<TypeChain> { get }
 	var chain: VDChain.Chain<Chain> { get }
 }
 
