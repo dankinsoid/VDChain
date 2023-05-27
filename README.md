@@ -9,7 +9,7 @@
 ## Description
 Combination of [`@dynamicMemberLookup`](https://docs.swift.org/swift-book/ReferenceManual/Attributes.html) with `KeyPath`es and `callAsFunction`
 ```swift
-let label = UILabel()~
+let label = UILabel().chain
   .text("Text")
   .textColor(.red)
   .font(.system(24))
