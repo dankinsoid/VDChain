@@ -43,13 +43,9 @@ public extension Chain {
 	}
 
 	/// Set value with keypath
-	///
-	/// - Parameter action: the modifier closure.
-	/// - Returns: `Self`
+    ///
 	func set<T>(_ keyPath: WritableKeyPath<Base.Root, T>, _ value: T) -> Chain<Base> {
-        self.do { root in
-            root[keyPath: keyPath] = value
-        }
+        base.set(keyPath, value)
 	}
 }
 

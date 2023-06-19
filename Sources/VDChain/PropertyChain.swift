@@ -17,12 +17,10 @@ public struct PropertyChain<Base: Chaining, Value> {
 	}
 
 	public func callAsFunction(_ value: Value) -> Chain<Base> {
-        chain.do { [getter] root in
-            guard let writable = getter as? WritableKeyPath<Base.Root, Value> else {
-                return
-            }
-            root[keyPath: writable] = value
+        guard let writable = getter as? WritableKeyPath<Base.Root, Value> else {
+            return chain
         }
+        return chain.set(writable, value)
 	}
 }
 

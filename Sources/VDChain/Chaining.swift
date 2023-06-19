@@ -4,4 +4,15 @@ import Foundation
 public protocol Chaining<Root> {
 
 	associatedtype Root
+    
+    func set<T>(_ keyPath: WritableKeyPath<Root, T>, _ value: T) -> Chain<Self>
+}
+
+public extension Chaining {
+    
+    func set<T>(_ keyPath: WritableKeyPath<Root, T>, _ value: T) -> Chain<Self> {
+        wrap().do { root in
+            root[keyPath: keyPath] = value
+        }
+    }
 }
