@@ -4,31 +4,36 @@ import Foundation
 @dynamicMemberLookup
 public struct PropertyChain<Base: Chaining, Value> {
 
-	public let chaining: Base
+	public let chain: Chain<Base>
 	public let getter: KeyPath<Base.Root, Value>
 
-	public init(_ value: Base, getter: KeyPath<Base.Root, Value>) {
-		chaining = value
+	public init(_ chain: Chain<Base>, getter: KeyPath<Base.Root, Value>) {
+        self.chain = chain
 		self.getter = getter
 	}
 
 	public subscript<A>(dynamicMember keyPath: KeyPath<Value, A>) -> PropertyChain<Base, A> {
-		PropertyChain<Base, A>(chaining, getter: getter.appending(path: keyPath))
+		PropertyChain<Base, A>(chain, getter: getter.appending(path: keyPath))
 	}
 
-	public func callAsFunction(_ value: Value) -> Chain<KeyPathChain<Base, Value>> {
-		KeyPathChain(chaining, keyPath: getter, value: value).wrap()
+	public func callAsFunction(_ value: Value) -> Chain<Base> {
+        chain.do { [getter] root in
+            guard let writable = getter as? WritableKeyPath<Base.Root, Value> else {
+                return
+            }
+            root[keyPath: writable] = value
+        }
 	}
 }
 
 public extension PropertyChain {
 
 	subscript<T, A>(dynamicMember keyPath: KeyPath<T, A>) -> PropertyChain<Base, A?> where Value == T? {
-		PropertyChain<Base, A?>(chaining, getter: getter.appending(path: \.[keyPath]))
+		PropertyChain<Base, A?>(chain, getter: getter.appending(path: \.[keyPath]))
 	}
 
 	subscript<T, A>(dynamicMember keyPath: WritableKeyPath<T, A?>) -> PropertyChain<Base, A?> where Value == T? {
-		PropertyChain<Base, A?>(chaining, getter: getter.appending(path: \.[writable: keyPath]))
+		PropertyChain<Base, A?>(chain, getter: getter.appending(path: \.[writable: keyPath]))
 	}
 }
 

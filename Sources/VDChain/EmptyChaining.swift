@@ -11,11 +11,10 @@ import Foundation
                  .apply()
  ```
   */
-public struct EmptyChaining<Root>: ValueChaining, ConsistentChaining, KeyPathChaining {
+public struct EmptyChaining<Root>: ValueChaining {
 
 	/// value to modify
 	public var root: Root
-	public let values: [PartialKeyPath<Root>: Any] = [:]
 
 	/// Initialization
 	///
@@ -23,14 +22,6 @@ public struct EmptyChaining<Root>: ValueChaining, ConsistentChaining, KeyPathCha
 	public init(_ root: Root) {
 		self.root = root
 	}
-
-	public func apply(on root: inout Root) {}
-
-	public func getAllValues(for root: Root) {
-		()
-	}
-
-	public func applyAllValues(_ values: Void, for root: inout Root) {}
 }
 
 postfix operator ~

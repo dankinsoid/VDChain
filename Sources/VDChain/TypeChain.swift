@@ -10,19 +10,9 @@ import Foundation
  modifier.apply(
  ```
   */
-public struct TypeChain<Root>: ConsistentChaining, KeyPathChaining {
-
-	public let values: [PartialKeyPath<Root>: Any] = [:]
-
+public struct TypeChain<Root>: Chaining {
+    
 	public init() {}
-
-	public func apply(on root: inout Root) {}
-
-	public func getAllValues(for root: Root) {
-		()
-	}
-
-	public func applyAllValues(_ values: Void, for root: inout Root) {}
 }
 
 public postfix func ~ <T>(_: T.Type) -> Chain<TypeChain<T>> {
