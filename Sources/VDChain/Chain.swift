@@ -1,7 +1,14 @@
 import Foundation
 
+public protocol ChainWrapper<Base> {
+    
+    associatedtype Base: Chaining
+    
+    func set<T>(_ keyPath: WritableKeyPath<Base.Root, T>, _ value: T) -> Self
+}
+
 @dynamicMemberLookup
-public struct Chain<Base: Chaining> {
+public struct Chain<Base: Chaining>: ChainWrapper {
 
 	public var base: Base
     public private(set) var values: ChainValues<Base.Root> = ChainValues()
@@ -10,9 +17,17 @@ public struct Chain<Base: Chaining> {
 		self.base = base
 	}
 
-	public subscript<A>(dynamicMember keyPath: KeyPath<Base.Root, A>) -> PropertyChain<Base, A> {
+    public subscript<A>(dynamicMember keyPath: KeyPath<Base.Root, A>) -> PropertyChain<Self, A> {
 		PropertyChain(self, getter: keyPath)
 	}
+    
+    /// Set value with keypath
+    ///
+    public func set<T>(_ keyPath: WritableKeyPath<Base.Root, T>, _ value: T) -> Chain<Base> {
+        var result = self
+        let apply = result.base.set(keyPath, value, values: result.values)
+        return result.do(apply)
+    }
     
     public func reduce<T>(_ keyPath: WritableKeyPath<ChainValues<Base.Root>, T>, _ value: (inout T) -> Void) -> Chain {
         var result = self
@@ -40,12 +55,6 @@ public extension Chain {
                 action(&root)
             }
         }
-	}
-
-	/// Set value with keypath
-    ///
-	func set<T>(_ keyPath: WritableKeyPath<Base.Root, T>, _ value: T) -> Chain<Base> {
-        base.set(keyPath, value)
 	}
 }
 

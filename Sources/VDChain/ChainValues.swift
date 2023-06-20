@@ -2,23 +2,39 @@ import Foundation
 
 public struct ChainValues<Root> {
     
-    private var values: [PartialKeyPath<ChainValues>: Any] = [:]
+    private var values: [PartialKeyPath<ChainValues>: (Any, (Any, Any) -> Any)] = [:]
     
     public init() {
     }
     
-    public subscript<T>(_ key: WritableKeyPath<ChainValues, T>) -> T? {
-        get {
-            values[key] as? T
-        }
-        set {
-            values[key] = newValue
+    public func get<T>(_ key: WritableKeyPath<ChainValues, T>) -> T? {
+        values[key]?.0 as? T
+    }
+    
+    public mutating func set<T>(
+        _ key: WritableKeyPath<ChainValues, T>,
+        _ newValue: T?,
+        uniquingWith: @escaping (T, T) -> T = { _, new in new }
+    ) {
+        values[key] = newValue.map { newValue in
+            (
+                newValue,
+                {
+                    guard let old = $0 as? T, let new = $1 as? T else {
+                        return newValue
+                    }
+                    return uniquingWith(old, new)
+                }
+            )
         }
     }
     
     public mutating func merge(_ other: ChainValues) {
-        values.merge(other.values) { _, new in
-            new
+        values.merge(other.values) { old, new in
+            (
+                new.1(old.0, new.0),
+                new.1
+            )
         }
     }
     
@@ -32,7 +48,14 @@ public struct ChainValues<Root> {
 extension ChainValues {
     
     public var apply: (inout Root) -> Void {
-        get { self[\.apply] ?? { _ in } }
-        set { self[\.apply] = newValue }
+        get { get(\.apply) ?? { _ in } }
+        set {
+            set(\.apply, newValue) { old, new in
+                {
+                    old(&$0)
+                    new(&$0)
+                }
+            }
+        }
     }
 }

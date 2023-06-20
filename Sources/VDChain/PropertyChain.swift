@@ -2,22 +2,22 @@ import Foundation
 
 /// Helper type for chaining
 @dynamicMemberLookup
-public struct PropertyChain<Base: Chaining, Value> {
+public struct PropertyChain<Chain: ChainWrapper, Value> {
 
-	public let chain: Chain<Base>
-	public let getter: KeyPath<Base.Root, Value>
+	public let chain: Chain
+    public let getter: KeyPath<Chain.Base.Root, Value>
 
-	public init(_ chain: Chain<Base>, getter: KeyPath<Base.Root, Value>) {
+    public init(_ chain: Chain, getter: KeyPath<Chain.Base.Root, Value>) {
         self.chain = chain
 		self.getter = getter
 	}
 
-	public subscript<A>(dynamicMember keyPath: KeyPath<Value, A>) -> PropertyChain<Base, A> {
-		PropertyChain<Base, A>(chain, getter: getter.appending(path: keyPath))
+    public subscript<A>(dynamicMember keyPath: KeyPath<Value, A>) -> PropertyChain<Chain, A> {
+        PropertyChain<Chain, A>(chain, getter: getter.appending(path: keyPath))
 	}
 
-	public func callAsFunction(_ value: Value) -> Chain<Base> {
-        guard let writable = getter as? WritableKeyPath<Base.Root, Value> else {
+	public func callAsFunction(_ value: Value) -> Chain {
+        guard let writable = getter as? WritableKeyPath<Chain.Base.Root, Value> else {
             return chain
         }
         return chain.set(writable, value)
@@ -26,12 +26,12 @@ public struct PropertyChain<Base: Chaining, Value> {
 
 public extension PropertyChain {
 
-	subscript<T, A>(dynamicMember keyPath: KeyPath<T, A>) -> PropertyChain<Base, A?> where Value == T? {
-		PropertyChain<Base, A?>(chain, getter: getter.appending(path: \.[keyPath]))
+	subscript<T, A>(dynamicMember keyPath: KeyPath<T, A>) -> PropertyChain<Chain, A?> where Value == T? {
+		PropertyChain<Chain, A?>(chain, getter: getter.appending(path: \.[keyPath]))
 	}
 
-	subscript<T, A>(dynamicMember keyPath: WritableKeyPath<T, A?>) -> PropertyChain<Base, A?> where Value == T? {
-		PropertyChain<Base, A?>(chain, getter: getter.appending(path: \.[writable: keyPath]))
+	subscript<T, A>(dynamicMember keyPath: WritableKeyPath<T, A?>) -> PropertyChain<Chain, A?> where Value == T? {
+		PropertyChain<Chain, A?>(chain, getter: getter.appending(path: \.[writable: keyPath]))
 	}
 }
 

@@ -5,13 +5,13 @@ public protocol Chaining<Root> {
 
 	associatedtype Root
     
-    func set<T>(_ keyPath: WritableKeyPath<Root, T>, _ value: T) -> Chain<Self>
+    mutating func set<T>(_ keyPath: WritableKeyPath<Root, T>, _ value: T, values: ChainValues<Root>) -> (inout Root) -> Void
 }
 
 public extension Chaining {
     
-    func set<T>(_ keyPath: WritableKeyPath<Root, T>, _ value: T) -> Chain<Self> {
-        wrap().do { root in
+    mutating func set<T>(_ keyPath: WritableKeyPath<Root, T>, _ value: T, values: ChainValues<Root>) -> (inout Root) -> Void {
+        { root in
             root[keyPath: keyPath] = value
         }
     }
