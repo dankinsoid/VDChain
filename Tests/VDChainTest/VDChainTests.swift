@@ -58,7 +58,7 @@ final class VDChainTests: XCTestCase {
     }
 }
 
-final class Object: Chainable {
+private final class Object: Chainable {
     
     var int = 0
     var string = ""
@@ -69,7 +69,7 @@ final class Object: Chainable {
     }
 }
 
-struct TestChaining<Root>: Chaining {
+private struct TestChaining<Root>: Chaining {
     
     var properties: [PartialKeyPath<Root>: Any] = [:]
     
