@@ -29,9 +29,9 @@ public struct Chain<Base: Chaining>: ChainWrapper {
         return result.do(apply)
     }
     
-    public func reduce<T>(_ keyPath: WritableKeyPath<ChainValues<Base.Root>, T>, _ value: (inout T) -> Void) -> Chain {
+    public func reduce<T>(_ keyPath: WritableKeyPath<ChainValues<Base.Root>, T>, _ value: (T) -> T) -> Chain {
         var result = self
-        value(&result.values[keyPath: keyPath])
+        result.values[keyPath: keyPath] = value(result.values[keyPath: keyPath])
         return result
     }
     
@@ -50,7 +50,7 @@ public extension Chain {
 	/// - Returns: `Self`
 	func `do`(_ action: @escaping (inout Base.Root) -> Void) -> Chain<Base> {
         reduce(\.apply) { apply in
-            apply = { [apply] root in
+            { root in
                 apply(&root)
                 action(&root)
             }
@@ -63,6 +63,14 @@ public extension Chaining {
 	func wrap() -> Chain<Self> {
 		Chain(self)
 	}
+}
+
+public extension Chain {
+    
+    /// Apply the chaining
+    func apply(on value: inout Base.Root) {
+        values.apply(&value)
+    }
 }
 
 public extension Chain where Base: ValueChaining {

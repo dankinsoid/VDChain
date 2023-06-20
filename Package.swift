@@ -23,5 +23,6 @@ let package = Package(
 			name: "VDChain",
 			dependencies: []
 		),
+        .testTarget(name: "VDChainTest", dependencies: ["VDChain"])
 	]
 )
