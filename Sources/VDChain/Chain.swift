@@ -32,9 +32,9 @@ public struct Chain<Base: Chaining>: ChainWrapper {
     /// Set value with keypath
     ///
     public func set<T>(_ keyPath: WritableKeyPath<Base.Root, T>, _ value: T) -> Chain<Base> {
-        var result = self
-        let apply = result.base.set(keyPath, value, values: result.values)
-        return result.do(apply)
+        self.do { root in
+            root[keyPath: keyPath] = value
+        }
     }
     
     public func reduce<T>(_ keyPath: WritableKeyPath<ChainValues<Base.Root>, T>, _ value: (T) -> T) -> Chain {

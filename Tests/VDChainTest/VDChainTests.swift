@@ -46,11 +46,10 @@ final class VDChainTests: XCTestCase {
     }
     
     func testCustomChaining() {
-        let chaining = TestChaining<Object>().wrap()
+        let chaining = TestChain<EmptyChaining<Object>>()
             .int(1)
             .string("1")
             .nested.double(1.0)
-            .base
         
         XCTAssertEqual(chaining.properties[\.int] as? Int, 1)
         XCTAssertEqual(chaining.properties[\.string] as? String, "1")
@@ -69,13 +68,14 @@ private final class Object: Chainable {
     }
 }
 
-private struct TestChaining<Root>: Chaining {
+@dynamicMemberLookup
+private struct TestChain<Base: Chaining>: ChainWrapper {
     
-    var properties: [PartialKeyPath<Root>: Any] = [:]
+    var properties: [PartialKeyPath<Base.Root>: Any] = [:]
     
-    mutating func set<T>(_ keyPath: WritableKeyPath<Root, T>, _ value: T, values: ChainValues<Root>) -> (inout Root) -> Void {
-        properties[keyPath] = value
-        return { _ in
-        }
+    func set<T>(_ keyPath: WritableKeyPath<Base.Root, T>, _ value: T) -> Self {
+        var result = self
+        result.properties[keyPath] = value
+        return result
     }
 }
