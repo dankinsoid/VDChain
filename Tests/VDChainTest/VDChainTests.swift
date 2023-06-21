@@ -10,7 +10,7 @@ final class VDChainTests: XCTestCase {
             .string("1")
             .nested.double(1.0)
             .apply()
-
+        
         XCTAssertEqual(object.int, 1)
         XCTAssertEqual(object.string, "1")
         XCTAssertEqual(object.nested.double, 1.0)

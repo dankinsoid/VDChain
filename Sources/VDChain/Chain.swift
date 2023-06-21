@@ -7,6 +7,18 @@ public protocol ChainWrapper<Base> {
     func set<T>(_ keyPath: WritableKeyPath<Base.Root, T>, _ value: T) -> Self
 }
 
+extension ChainWrapper {
+    
+    public subscript<A>(dynamicMember keyPath: WritableKeyPath<Base.Root, A>) -> PropertyChain<Self, A> {
+        PropertyChain<Self, A>(self, getter: keyPath)
+    }
+    
+    @_disfavoredOverload
+    public subscript<A>(dynamicMember keyPath: KeyPath<Base.Root, A>) -> ImmutablePropertyChain<Self, A> {
+        ImmutablePropertyChain<Self, A>(self, getter: keyPath)
+    }
+}
+
 @dynamicMemberLookup
 public struct Chain<Base: Chaining>: ChainWrapper {
 
@@ -15,10 +27,6 @@ public struct Chain<Base: Chaining>: ChainWrapper {
 
 	public init(_ base: Base) {
 		self.base = base
-	}
-
-    public subscript<A>(dynamicMember keyPath: KeyPath<Base.Root, A>) -> PropertyChain<Self, A> {
-		PropertyChain(self, getter: keyPath)
 	}
     
     /// Set value with keypath
