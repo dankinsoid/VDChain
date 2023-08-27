@@ -52,15 +52,25 @@ public struct Chain<Base: Chaining>: ChainWrapper {
 
 public extension Chain {
 
+    /// Add a closure modifier to the chaining.
+    ///
+    /// - Parameter action: the modifier closure.
+    /// - Returns: `Self`
+    func `do`(_ action: @escaping (inout Base.Root) -> Void) -> Chain<Base> {
+        self.do { root, _ in
+            action(&root)
+        }
+    }
+    
 	/// Add a closure modifier to the chaining.
 	///
 	/// - Parameter action: the modifier closure.
 	/// - Returns: `Self`
-	func `do`(_ action: @escaping (inout Base.Root) -> Void) -> Chain<Base> {
+    func `do`(_ action: @escaping (inout Base.Root, ChainValues<Base.Root>) -> Void) -> Chain<Base> {
         reduce(\.apply) { apply in
-            { root in
-                apply(&root)
-                action(&root)
+            { root, values in
+                apply(&root, values)
+                action(&root, values)
             }
         }
 	}
@@ -77,7 +87,7 @@ public extension Chain {
     
     /// Apply the chaining
     func apply(on value: inout Base.Root) {
-        values.apply(&value)
+        values.apply(&value, values)
     }
 }
 
@@ -87,7 +97,7 @@ public extension Chain where Base: ValueChaining {
 	@discardableResult
 	func apply() -> Base.Root {
 		var result = base.root
-		values.apply(&result)
+		values.apply(&result, values)
 		return result
 	}
 }

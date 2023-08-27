@@ -47,13 +47,17 @@ public struct ChainValues<Root> {
 
 extension ChainValues {
     
-    public var apply: (inout Root) -> Void {
-        get { get(\.apply) ?? { _ in } }
+    public var apply: (inout Root, ChainValues) -> Void {
+        get { get(\.apply) ?? { _, _ in } }
         set {
-            set(\.apply, newValue) { old, new in
+            set(\.apply, { root, values in
+                var values = values
+                values.apply = { _, _ in }
+                newValue(&root, values)
+            }) { old, new in
                 {
-                    old(&$0)
-                    new(&$0)
+                    old(&$0, $1)
+                    new(&$0, $1)
                 }
             }
         }
